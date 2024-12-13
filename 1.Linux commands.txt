@@ -1,0 +1,221 @@
+## Interview Q ###
+1. What is SSH?  -> Socket shell used to communicate eith servers
+2. What is port number of SSH?  -> 22
+3. How to show cpu information and memory information?
+          -> CPU information = command : lscpu or cat /proc/cpuinfo
+          -> Memory information = command : lsmem or cat /proc/meminfo
+4. How to check server performance?  -> command : top or htop 
+5. For example there is a log file and in that i want to search an error how can i do it ?
+          -> indirectly asked Q -> command : cat file_name | grep error(word) -i
+
+
+
+
+---------------------------------------------------------------------
+
+** without user we can not login to server **
+
+AWS : EC2 INSTANCES = ELASTIC COMPUTE CLOUD
+TO CREATE EC2 WE NEED TO PERFORM 7 STEPS:
+
+SERVER : COMPUTER
+1. TAGS = NAME
+2. AMI (AMAZON MACHINE IMAGE) = OS, SOFTWARE PACKAGES 
+3. INSTANCE_TYPE = CPU & RAM
+4. KEY_PAIR = LOGIN (public = managed by AWS , private = user)
+5. NETWORK = VPC, SECURITY GROUPS (port number = 0-65535)
+6. STORAGE = 8 GB - 16 TB
+7. SUMMARY = TO REVIEW
+
+
+-- 04 --
+
+OS = USED TO COMMUNICATE WITH SERVERS / SYSTEMS
+TYPES :
+1. Windows
+2. Linux
+3. IOS / MACOS
+
+MODES :
+1. GUI = Graphical User Interface
+2. CLI = Command Line Interface
+
+COMMANDS :
+sudo -i                   : to switch from ec2-user to root-user
+sudo su -                 : to switch from ec2-user to root-user
+sudo su                   : to switch from ec2-user to root-user
+logout (ctrl d)           : to switch from root-user to ec2-user
+cat                       : to show the content of file
+cat /proc/cpuinfo         : to show the cpu information
+lscpu                     : to show the cpu information
+cat /proc/meminfo         : to show memory information
+lsmem                     : to show memory information
+fdisk -l                  : to show volume/ROM information
+lsblk                     : to show volume information
+df // df -m // df -i      : to show volume information
+ifconfig / ip addr / ip addr show / hostname -i  : to show the ip address
+
+-- 05 --
+
+FILE COMMANDS :
+touch file1           : to create a file
+ls or ll              : to show the list of files
+cat file1             : to show the content 
+cat>>file1            : to write content in a file
+enter ctrl d          : to save and exit from file
+cp file1 file2        : copies the content from file1 to file2
+mv file1 file2        : to rename file1 to file2
+rm file1              : to remove a file
+rm file1 -f           :to remove a file forcefully
+rm * -f               :to remove all files forcefully
+touch file{1..100}    : to create 100 files at a time
+cat file1 >>file2     : to copy content from file1 to file2 (without overriding)
+========================================================================
+How to check the SERVER Performance:
+top
+htop : yum install htop -y
+
+head file1  : shows first 10 lines a file
+head -5 file1  : shows first 5 lines a file
+head -15 file1  :show first 15 lines a file
+tail file1  : shows last 10 lines a file
+tail -5 file1  : shows last 5 lines a file
+tail -15 file1  : shows last 15 lines a file
+sed -n '5,15p' file1  : to print line5 to 15    (-n = numbers of lines    p = print)
+wc  : to show lines, words & characters
+
+-------------------------------------------------------
+-- 06 --
+
+EDITORS : to edit the files
+Types:
+1. VIM / vi
+2. nano
+
+i          : to insert the content 
+ecc        : to come out from insert mode
+
+
+There are 3 modes in VIM :
+1. command mode 
+2. insert mode
+3. save mode
+
+3. SAVE MODE :
+:w          : to save
+:q          : to quit
+:wq         : to save and quit
+:wq!        : save and quit forcefully 
+
+2. INSERT MODE :
+i          : to insert command
+A          : end of the line   (ensure that you are outside of insert mode)
+I          : starting of line  (ensure that you are outside of insert mode)
+O          : create new line above existing
+o          : create new line below existing
+
+1. COMMAND MODE :
+gg               : top of the file
+shift g          : last line of file
+:set number      : to show number of lines inside file
+cat -n file1     : to show the number of lines outside from file
+:n               : to go to specific line
+yy               : to copy a line
+10yy             : to copy 10 lines
+p                : to paste
+5pp              : to paste 5 lines
+dd               : to delete 
+10dd             : to delete 10 lines
+u                :undo
+ctrl r           :redo
+/word            : to search for a word
+=====================================================
+
+PERMISSIONS : 
+-rw-r--r--
+
+Types of FILE :
+-          : regular file
+b          : blocked file
+c          : character file
+d          : directory (folder)
+l          : link file
+
+PERMISSIONS :
+
+read        : r : 4
+write       : w : 2
+executable  : x : 1
+
+CATEGORIES :
+user    : rw-   : 6     (come under user category) (r+w = 4+2 = 6)
+group   : r--   : 4   
+others  : r--   : 4
+
+METHOD 1(numerical)    : chmod 567 file1
+METHOD 2(alphabetical) : chmod u=rwx,g=rw,o=rx          (u-user,g-group,o-oathers)
+----------------------------------------------------------
+
+-- 07 --
+
+GREP : Global Regular Expression Print
+-> to search the words in a file
+
+grep abhi  file1                  : to search forabhi  word
+grep abhi  file1 -i               : to search for abhi word (-i : avoid case sensitive)
+grep abhi  file1 -ic              : to count for abhi word (-c : to check how many times abhi word is repeating i.e. count)
+grep abhi  file1 -v               : to print lines without abhi word (-v : to avoid)
+grep 'word1\|word2\|word3' file1  : to search multiple words at a time
+cat file1 | grep abhi  :
+->   | : pipe symbol : here 1st command is the input for second command
+
+==========================================================================
+cat -n file1                           : to show the number of lines outside from file 
+
+SED : STREAM EDITOR   (sed command will replace a word occuring in single time in line)
+-> to used to replace the words in file.
+
+sed 's/word1/word2/'                   : to replace word1 with word2
+sed 's/devops/aws/;s/abhi/abhishek/'    : to replace multiple words
+sed '2c who am i' file1                : to replace a line
+sed -n '5,12p' file1                   : to print from line 5 to 12
+  * Optional *
+    cat file1 | sed -n '5,12p'         : to print from line 5 to 12
+    cat -n file1 | sed -n '5,12p'      : to print from line 5 to 12 wtih index number
+sed -n '10p' file1                     : to print particular line number 10 
+
+:%s/word1/word2/        : to replace a word1 with word2 inside the file.   (% means filter out)
+:%s/word1/word2/g       :  to repalce same word occuring multiple times in single line
+
+=====================================================================================
+
+users & groups :
+to work with server we need to login as user.
+
+Types of users : 
+ec2-user    : default
+root        : admin (he has all permissions)
+
+useradd abhi    : to create a user
+cat /etc/passwd   : to list users
+
+Set of rules for creating a password :
+1. it will not be exposed.
+2. username will not be given as password.
+3. min 8 character.
+
+
+** If you want to give a permission on specific user you need to add in sudo file. **
+** In sudo file, on line number 100 there is root user **
+** sudo user means he having all the permissions **
+
+visudo          : file contains users which they have permissions and we can edit those permissions 
+su - abhi      : switch on particular user
+
+NORMAL TO SUPER USER :
+
+useradd abhi
+passwd abhi
+visudo --> :100  --> yy & p --> root = abhi --> save
+su - abhi
+sudo useradd vivek
