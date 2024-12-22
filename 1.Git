@@ -1,0 +1,328 @@
+###  INTERVIEW QUESTIONS ###
+
+     1. Git is which generation of VCS ?     --> 3rd
+     2. What is Git and why we need to use Git ?
+               Git - Version control ssytem to track files
+     3. What are the stages on Git and Explain them ?
+     4. Differ between CVCS v/s DVCS ?
+     5. Differ between SVN and GIT ?    --> Both are same 
+     6. How to check commits in git ?    --> git log 
+ **  7. Exaplin branches in Git ?
+     8. Which is default branch in Git ?    --> Master Branch
+ **  9. Differ between MERGE vs REBASE ?  
+               --> merge will show files, rebase will not show files.
+               --> merge will not show branches, rebase will show branches.
+               --> merge will show entire history, rebase will not.
+
+     10. What is meaning of STASH and what are those commands?
+               --> to hide files which are not commited.   --> git stash
+
+     11. What do you know about MERGE CONFLICT ?
+     12. How will you resolve CONFLICT ?   --> manually
+     13. Differ MERGE vs CHERRY-PICK ?
+               --> MERGE : adding the files between one branch to another branch
+               --> CHERRY-PICK :merge only specific files from one branch to another with commit_id
+
+     14. Differ GIT PUSH vs GIT PULL ?
+               --> GIT PUSH : to send code form local to GitHub
+               --> GIT PULL : to get code from GitHub to local
+     15. DIFFER GIT PULL vs GIT FETCH ?
+               --> Pull : whatever changes come to your local (give you changes)
+               --> Fetch : only changes will shown  (show the changes)
+     16. Differ GIT MERGE vd CHEERY PICK ? 
+               --> Merge : for all files
+               --> CHERRY-PICK : fro specific file
+     17. Differ GIT CLONE vs GIT PULL ?
+               --> Clone : Entire Repository will come
+               --> Pull : only files and branches will come
+     18. Differ GIT CLONE vs GIT FORK ?
+               --> Clone : copy source code from github to git
+               --> Fork :copy source code from github to github only
+     19. Differ GIT REVERT vs GIT RESTORE ?
+               --> GIT REVERT  : used to undo merging blw branches.
+               --> GIT RESTORE : to untracked the tracked file.
+     20. What is .gitignore ?
+               --> If you want the files but you not have to tracked them
+                    When you put a .gitignore it will never go to github
+
+
+
+***  Linux Torvalds    :    Invented LINUX and GIT also   ***
+
+GIT  :  GLOBAL INFORMATION TRACKER (Globally you can follow up the information)
+
+Git also called as Version Control System (VCS) & Source Code Management (SCM)
+
+VCS  :  Controlling the source code of every version.
+     :  it will keep the source code separately for each version.
+
+Repository  :   Folder which contains the source code.
+
+v-1   : 100 lines   ---->  store (repo-1)
+v-2   : 200 lines   ---->  store (repo-2)
+v-3   : 300 lines   ---->  store (repo-3)
+
+Git : also called as * Chit *
+        - used to track files
+        - maintain multiple version of same file
+        - platform independent  (run on any kind of platform)
+        - free and open source
+        - handle large projects
+        - 3rd generarion of VCS
+        - it is written on c language
+        - it came on the year 2005
+
+
+VCS History:
+
+     SCCM                    RCS                          CVS                    SVN                         GIT
+can track single      can track multiple        can track multiple      can track multiple files          Same as SVN but can access
+file                  file & can't track        file and also track     and also folders and also         on multiple places
+(1972)               folders but only single   folders but only one    multiple user can access              (2005)
+                      permission is there       permission is there    source code placed on single
+                                                                        place. (2000)
+
+
+CVCS  :  CENTRALIZED VERSION CONTROL SYSTEM.
+Ex : SVN : it can store code in a single repository
+
+DVCS  :  DISTRIBUTED VERSION CONTROL SYSTEM.
+Ex : GIT : it can store code in a multiple repository
+
+
+ROLLBACK  :  Going back to previous version of application.
+     (when current versionis not wokring then we are going to use ROLLBACK)
+
+
+STAGES: (GIT ARCHITECTURE)
+WORKING DIRECTORY : where we can write our source code.
+STAGING AREA      : we track files here.
+REPOSITORY        : where we store the tracked source code.
+
+
+
+WORKING WITH GIT :
+create a ec-2 server
+mkdir zomato
+cd zomato
+
+yum install git -y        [yum=pkg manager, install=action, gir=pkg name, -y=yes]
+
+git -v       : to check version
+git init     : to intsall .git (local repo)   (If you dont have .git , your commands will not work )
+             : to initialize local repo
+
+to create file     : vi index.html  
+to check file      : git status
+to track file      : git add index.html
+to store file      : git commit -m 'commit-1' index.html
+
+create file --> add --> commit
+
+to show commits                    : git log
+to show last 2 commits             : git log -2
+to show commits in single line     : git log -2 --oneline
+
+----------------------------------------------------
+
+-- 09 --
+
+
+git config user.name 'karan'
+git config user.email 'karan2603@gmail.com'
+
+NOTE : this user and email will be replicated to new comits only.
+
+git show : used to show the files which are attached to commits.
+git log --oneline
+git show commit_id
+
+
+## Branches : 
+     It is a individual line of code.
+     developer write a code on the branch.
+     initially branches  we create on git.
+     after write source code on git we push on github.
+     Default brnach is Master.
+     NOTE: when we do initial commit the only default brnach will be creatd.
+
+
+Developer --> Git(Movies branch) --> code --> github
+
+
+COMMANDS :
+** When you go to new brnach whatever you commited in previous brnach those brnaches are carry forward to the new brnach **
+
+git branch                     : to list the branches
+git branch movies              : to create the new branch movie
+git checkout movies            : to switch from one brnach to another branch 
+git checkout -b series         : to create and switch series branch at same time
+git branch -m old new          : to rename the branch
+git branch -D chackout         : to delete a branch
+git restore --staged file1     : to untracked the tracked file
+git restore file1              : to restore tracked file
+git show file1                 : to show the how many commits are done  
+
+
+NOTE : to recover th deleted branch
+
+GIT PULL : it will get the branch from github to git
+git pull origin branch_name
+git checkout branch_name 
+
+
+
+PROCESS :
+     git brnach movies
+              | 
+     git checkout movies
+              |
+     tocuh movies{1..5}
+              |
+     git add movies*
+              |  
+     git commit -m 'commited' movies*
+              |
+     git remote add origin <link>
+              |     
+     git push origin movies
+              |     
+          username
+          password (token)
+
+
+NOW PUSH THE CODE TO GITHUB :
+create a repo
+git remote add origin <link>
+
+PUSH : to send files from git(local) to github(remote)
+local: .git  &  remote: paytm.git
+git push origin movies
+username:
+password:
+
+
+TOKEN GENERATION : 
+account -->  settings --> developer setting --> PAT(Personal Access Token) --> Classic --> Generate new token --> classic --> name: abcd --> select 6 options --> genreate
+
+NOTE: it will be visible only once 
+token1 (expiry in 30days) : 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
+                          : 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 (2nd account)
+
+
+create branch
+switch branch
+create files
+add
+commit
+push
+
+
+** If you want the files but you not have to tracked them for this there is concept gitignore **
+** When you put a .gitignore it will never go to github because you cant track those files **
+ GIT IGNORE : it will not track the files which we want.
+     touch python1
+     vim .gitignore
+     j*  --> :wq
+     git status
+     you cant see the files now
+
+** NOTE : If you want to delete a branch you need to on another branch. If you are on existing current branch you can't delete it. **
+
+GIT RESTORE : to untracked the tracked file.
+touch file1
+git status
+git add file1
+git status
+git restore --staged file1
+
+
+GET BACK THE DELETED FILES :
+Note : we can restore only tracked files.
+git restore file1
+
+
+master
+1             movies
+               1 + 5 = 6
+              train
+               6 + 5 = 11
+              dth
+               11 + 5 = 16
+              recharge
+               16 + 5 = 21
+
+--------------------------------------------------
+-- 11 --
+MERGING : 
+
+MERGE : adding the files between one branch to another branch
+git merge branch_name : to merge the branches 
+
+REABSE : adding the files between one branch to another branch
+git rebase branch_name : to merge the branches 
+
+GIT REVERT: used to undo merging blw branches.
+git revert branch_name
+
+
+** NOTE: If you want to merge the files from github we need to use pull request **
+
+STASH : to hide the files whcih are not commited.
+Note : files need to be tracked but not commited.
+
+git stash     : to hide files not commited
+git stash applying  : to get stashed files
+
+Prcoess: 
+     tocuh file1
+     git stash 
+     git stash apply
+     git stash list     : to list the stashes
+     git stash clear    : to remove stashes
+     git stash pop (clear last stash)      : to remove stashes
+
+============================================
+
+git clone: use to copy repo to local 
+git clone https://github.com/chiklu1508/paytm.git
+
+git push: to send code form local to GitHub
+git push origin master
+
+git pull: to get code from GitHub to local 
+git pull origin master
+
+git fetch: it shows changes from GitHub to git 
+git fetch
+
+=================================================
+-- 12 --
+
+MERGE CONFLICT :
+when we try to merge 2 branches with same file and different content
+then conflict will raise.
+so we need to resolve the conflict manually
+                     File1
+              dev-1 -------- dev-2        
+             branch-1--------branch-2   
+             content-1--------content-2    
+
+
+CHERRY-PICK :
+we can merge only specific files from one branch to another
+with the help of commit_id
+
+git cherry-pik commit_id
+
+
+SHOW:
+to show commits for a file
+git show commit_id
+
+git log --stat     : to show the commits history
+git log --patch    : to show the commits history
+
+
+
+
