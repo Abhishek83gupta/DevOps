@@ -1,0 +1,452 @@
+## INTERVIEW QUESTIONS ##
+
+1. What is configuration managemnet tool ?
+2. What is vim /etc/ssh/sshd_config ?
+3. What is PLAYBOOK ?
+         --> PLAYBOOK : it is collection of modules 
+
+4. You want to remove worker node from ansible node, How will you remove ?
+5. You want to see how many node are connected how will you see?
+                  --> cd .ssh  ->  cat known_hosts 
+                  --> cd .ssh  ->  ansible all --list-host     (its not correct, if you add dummy ip inside inventory file it shows but actually it is not correct)
+
+--------------------------------------------------------------------------------------------------------
+Ansible :   
+ 
+ all the following process becomes automated with help of Ansible
+ SERVER --> SOFTWARE INSTALLATION --> TOMCAT SETUP --> DEPLOYMENT 
+
+its a free and opensource tool.
+its an it engine which automates from server creation to deployment.
+its is also called as configuration management tool.
+
+configuration   : hardware and software properties of server (CPU,MEMORY,OS)
+management      : what are packages going to install (UPDATE,DELETE,INSTALL)
+
+ansible is invented bt Maichel dehaan in 2012. (free and opensource)
+ansible is taken by RedHat (both free and paid versions)
+We have both free and paid version of ansible.
+it is platform independent.
+ansible works with YAML language.
+ansible dependency is python.
+GUI for ansible is Ansible-Tower.
+ansible is agentless.  (like for Ansible there is java-11 is agent here is no agent)
+
+SSH protocol     : to connect two servers 
+
+PLAYBOOK  : it is file which consist ansible code.
+          : its a file which we are write the code to intsall softwares and deployment even the server creation.
+          : If you want to any kind of work in ansible you need to write PLAYBOOK.
+inventory file   : worker node information stored
+--------------------------------------------------------
+HOW IT WORKS ?
+ARCHITECTURE:
+
+ANSIBLE SERVER: used to communicate with worker nodes and install pkgs, deployment
+WORKER NODES: takes commands from ansible server and works according to it
+PLAYBOOK: conatins the code which is used to perform action.
+INVENTORY: conatains info about worker nodes and group.
+--------------------------------------------------------------------------------------------------------
+
+for servers hostname is mandatory
+Hostname : to identify the server
+
+vim /etc/ssh/sshd_config    : it is file having properties of login of root user
+                           : If root user login to other servers you need to modify this file on every server.
+
+vim /etc/ansible/hosts   : file conains list of hosts that Ansible can manage.
+
+** yum package is not going to work for Ansible. **
+
+                ansible all -a "yum install git -y"
+                        |    |
+                        |  for arguments
+                 installing for all servers
+
+
+SETUP:
+
+CREATE 5 SERVERS (1=ANSIBLE, 2=DEV, 2=TEST)
+ALL SERVERS:
+sudo -i
+hostnamectl set-hostname ansible/dev-1/dev-2/test-1/test-2     // for different servers give diff names hostname
+sudo -i
+
+
+// below all same for all servers
+passwd root        // give same password for all servers (password is invisible)
+vim /etc/ssh/sshd_config 
+(line 40 uncomment (PermitRootLogin yes), line 65 no=yes (PasswordAuthentication yes), line 66 comment (PermitEmptyPasswords no))
+systemctl restart sshd
+systemctl status sshd
+
+
+ANSIBLE SERVER (main wala):
+sudo yum install ansible -y             (// amazon-linux-extras install ansible2 -y)         // yum is not supported for ansible as per sir
+yum install python3 python3-pip python3-devel -y     (// yum install python python-pip python-dlevel -y)
+vim /etc/ansible/hosts (line 12 paste below code)    // If this file is empty dont panic stay with steps
+
+make groups on line 12  : [dev] and [test]      // empyty file : make two groups
+
+[dev]
+172.31.44.19        // private ip of first dev server 
+172.31.35.18        // private ip of second dev server
+[test]
+172.31.36.39         // private ip of first test server
+172.31.43.36         // private ip of second test server
+
+// all servers same time                                    // after many days if getting some error to connect worker nodes (like UNREACHABLE!) then do again these steps ssh wale
+ssh-keygen           # used to generate the keys 
+enter 4 times
+// in ansible
+ssh-copy-id root@private-ip  -- > yes -- > password(given in above steps)             (ssh-copy-id root@private-ip_of_every_other_4_server_one_by_one )
+ssh private-ip
+ctrl d
+
+NOTE: COPY THE KEYS TO ALL WORKER NODES BY USING ABOVE METHOD
+-------------------------------------------------------------------------------------------------------------------------------------
+1. ADHOC COMMANDS
+these are simple linux commands.
+used for temporary work.
+these commands will be over rided.
+
+ansible all -a "yum install git -y"
+ansible all -a "yum install maven -y"
+ansible all -a "mvn --version"
+ansible all -a "touch file1"
+ansible all -a "ls"
+ansible all -a "yum install httpd -y"             // httpd : Apache HTTP server
+ansible all -a "systemctl restart httpd"
+ansible all -a "systemctl status httpd"
+ansible all -a "useradd raham"
+
+
+INVENTORY HOST PATTREN:
+ansible all --list-hosts                // list for all 4 servers i.e(dev & test) display its private ip
+ansible dev --list-hosts               // list all dev servers
+ansible test --list-hosts             // list all test servers
+ansible test[0] --list-hosts         // list 0th index server i.e is 1st test server (test-1)
+ansible all[-1] --list-hosts        // list second last server private ip
+ansible all[1:3] --list-hosts      // list in between ranges servers
+
+
+Verify that Ansible can connect:
+ansible dev -m ping 
+ansible test -m ping
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-- 22 --
+-------------------------------------------------------------------------------------------------------------------------------------
+ANSIBLE MODULES : work on for reusability purpose
+
+to remove the git   : ansible all -a 'yum remove git*'
+
+         ansible all -m yum -a 'name=git state=present'
+                      |                       |  
+                    module                installing
+
+Modules :  
+yum       : for installing or removing packages
+service   : If already intsall give service instead of yum else it gives error
+user      : to create or work with users
+copy      : to copy the content (src='' dest='')
+
+app.yml   : it is a text file which contains properties of application 
+
+SERVERS :
+webserver : port no is 80 (apache,ngnix)
+appserver : port no is 8080 (tomcat)
+dbserver : port no is 5432 (5432:postgresql, 3306:mysql, 8529:ArangoDB)
+
+ansible all -a 'ls/root'                        // to verify the yml file is copy or not to root 
+
+* When you deploy the application inside the application you need to put this yml file*
+
+ok : number of tasked performed by Ansible
+changed : how many tasked given by the user
+--------------------------------------------------------
+--------------------------------------------------------
+color pattren:
+
+YELLOW	: SUCCESSFUL
+RED	    : FAILED
+GREEN	: ALREADY DONE
+BLUE	: SKIPPED
+--------------------------------------------------------
+ansible all -a "yum install git -y"
+ansible all -m yum -a "name=git state=present"
+ansible all -m yum -a "name=docker state=present"  (present=install)
+ansible all -m yum -a "name=docker state=absent"  (absent=uninstall)
+ansible all -m yum -a "name=docker state=latest"   (latest=update)
+ansible all -m service -a "name=httpd state=started"
+ansible all -m service -a "name=httpd state=stopped"
+ansible all -m user -a "name=rajinikanth state=present"
+ansible all -m user -a "name=rajinikanth state=absent"
+ansible all -m copy -a "src=app.yml dest=/root"   (for this create app.yml file and write content)
+ansible all -a "ls /root"
+
+app.yml  -->
+name: abc
+webserver: 192.168.100.1:80                        (dumy ip addresses)
+appserver: 192.168.100.2:8080
+db_server: 192.168.100.3:5432
+lb_url: www.abc.com
+--------------------------------------------------------
+PLAYBOOKS:
+playbook is a collection of modules.
+we can execute multiple modules at same time.
+we can reuse the playbook.
+playbook will be written on YAML language.
+YAML: YET ANOTHER MARKUP LANGUAGE
+its a human readable and serial langauge.
+yaml is syntax-based.
+yaml start with --- and end with ...        // its optional
+we write it on list format.
+extension is .yml or .yaml
+-------------------------------------------------------- 
+PLAYBOOK1:
+
+vim karan.yml
+
+---
+- hosts: all                                     # the playbook will run on all hosts  
+  tasks:
+    - name: install httpd                        # The - (dash) in YAML indicates the start of a new item in a list
+      yum: name=httpd state=present
+
+    - name: start httpd
+      service: name=httpd state=started
+
+    - name: create user
+      user: name=groot state=present
+...
+
+
+ansible-playbook karan.yml                  // to run the ansible playbook
+
+--------------------------------------------------------
+- hosts: all
+  tasks:
+    - name: remove httpd
+      yum: name=httpd state=absent
+
+    - name: stop httpd
+      service: name=httpd state=stopped
+
+    - name: remove user
+      user: name=groot state=absent
+
+--------------------------------------------------------
+TAGS:
+used to execute or skip a specific task          // tags name can be anything
+
+- hosts: all
+  tasks:
+    - name: install docker
+      yum: name=docker state=present
+      tags: a
+
+    - name: start docker
+      service: name=docker state=started
+      tags: b
+
+    - name: install maven
+      yum: name=maven state=present
+      tags: c
+
+    - name: create user
+      user: name=groot state=present
+      tags: d
+
+SINGLE TAG: ansible-playbook karan.yml --tags c         // execute only c tag
+MULTI TAGS: ansible-playbook karan.yml --tags a,b      // execute a nd b 
+SKIP TAGS: ansible-playbook karan.yml --skip-tags "c"                           // skip c and execute all
+MULTI SKIP TAGS: SKIP TAGS: ansible-playbook karan.yml --skip-tags "b,c"       // skip b and c and execute all  
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-- 23 --
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Modules :
+shell, command, raw : these modules responsible for executing plane linux commands.
+
+SHELL VS COMMAND VS RAW
+
+- hosts: all
+  tasks:
+    - name: install git
+      shell: yum install git -y
+
+    - name: install maven
+      command: yum install maven -y
+
+    - name: install docker
+      raw: yum install docker -y
+
+RAW >> COMMAND >> SHELL
+
+sed -i 's/install/remove/g' raham.yml
+
+----------------------------------------------------
+- hosts: all
+  tasks:
+    - name: remove git
+      shell: yum remove git -y
+
+    - name: remove maven
+      command: yum remove maven -y
+
+    - name: remove docker
+      raw: yum remove docker -y
+
+ansible-playbook raham.yml
+
+** with raw module you can directly work with your node without installing python on my main node **
+** for uninsatlling git ypu need to put * there after git because some dependenies of git will there **
+
+----------------------------------------------------
+                                                    VARIABLES
+                                                        |
+                                    -------------------------------------------------
+                                    |                                               |
+                                  STATIC                                         DYNAMIC 
+                  (vars which will define inside playbook)        (vars which are not define inside playbook)
+
+
+- hosts: all
+  vars:
+    a: git
+    b: maven
+    c: docker
+  tasks:
+    - name: install git
+      yum: name={{a}} state=present
+
+    - name: install maven
+      yum: name={{b}} state=present
+
+    - name: install docker
+      yum: name={{c}} state=present
+
+
+ansible-playbook raham.yml
+
+----------------------------------------------------
+- hosts: all
+  vars:
+    a: git*
+    b: maven
+    c: docker
+  tasks:
+    - name: install git*
+      yum: name={{a}} state=absent
+
+    - name: install maven
+      yum: name={{b}} state=absent
+
+    - name: install docker
+      yum: name={{c}} state=absent
+
+ansible-playbook raham.yml
+ansible all -a 'git --version'         // for checking that is all packages are successfully removed or not
+
+----------------------------------------------------
+- hosts: all
+  vars:
+    a: git*
+    b: maven
+    c: docker
+  tasks:
+    - name: install git*
+      yum: name={{a}} state=present
+
+    - name: install maven
+      yum: name={{b}} state=present
+
+    - name: install docker
+      yum: name={{c}} state=present
+
+    - name: install pkg
+      yum: name={{d}} state=present
+
+ansible all -a "yum remove git* maven* docker* tree* -y"
+
+----------------------------------------------------
+- hosts: all
+  vars:
+    a: git
+    b: maven
+    c: docker
+  tasks:
+    - name: install git*
+      yum: name={{a}} state=present
+
+    - name: install maven
+      yum: name={{b}} state=present
+
+    - name: install docker
+      yum: name={{c}} state=present
+
+    - name: install {{d}}
+      yum: name={{d}} state=present
+
+    - name: install {{e}}
+      yum: name={{e}} state=present
+
+ single var: ansible-playbook raham.yml --extra-vars "d=tree"
+ multi var: ansible-playbook raham.yml --extra-vars "d=tree e=java-11-amazon-corretto"
+
+sed -i "s/present/absent/g" raham.yml
+ multi var: ansible-playbook raham.yml --extra-vars "d=tree e=java-11-amazon-corretto"
+
+
+----------------------------------------------------
+
+LOOPS:
+
+- hosts: all
+  tasks:
+    - name: install pkgs
+      yum: name={{item}} state=present
+      with_items:
+        - git
+        - maven
+        - docker
+        - htppd
+        - tree
+
+----------------------------------------------------
+- hosts: all
+  tasks:
+    - name: create users
+      user: name={{item}} state=present
+      with_items:
+        - jayanth
+        - delidemir
+        - ramesh
+        - kowshik
+        - revi
+        - manikanta
+        - sravanthi
+        - sarvani
+        - nikitha
+        - sadekaa
+
+----------------------------------------------------
+** Setup module is going to print complete information of a worker node **
+command     : ansible all -m setup
+
+
+TROUBLESHOOTING:
+ansible all -m setup | grep -i cpus         // for cpu information aof all servers
+ansible all -m setup | grep -i mem         // for memory information aof all servers
+
+** Average capacity of instance is minimun 8 CPU's **
+
+Increase the size of computing capacity (t2.micro --> t2.large)
+goto servers --> select one(dev-1)  --> stop the instance --> select instance --> goto actions --> Instance Setting --> Change instance type 
+after this run again TROUBLESHOOTING commands.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-- --
+-------------------------------------------------------------------------------------------------------------------------------------
