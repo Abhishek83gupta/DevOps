@@ -10,6 +10,8 @@
                   --> cd .ssh  ->  cat known_hosts 
                   --> cd .ssh  ->  ansible all --list-host     (its not correct, if you add dummy ip inside inventory file it shows but actually it is not correct)
 
+6. Scanario Based -> If you want to troubleshoot of worker node want to show particular properties of worker node from ansible how can do it ?
+                  --> use Debug module  where you can create custom output
 --------------------------------------------------------------------------------------------------------
 Ansible :   
  
@@ -169,7 +171,7 @@ changed : how many tasked given by the user
 color pattren:
 
 YELLOW	: SUCCESSFUL
-RED	    : FAILED
+RED	: FAILED
 GREEN	: ALREADY DONE
 BLUE	: SKIPPED
 --------------------------------------------------------
@@ -421,16 +423,14 @@ LOOPS:
     - name: create users
       user: name={{item}} state=present
       with_items:
-        - jayanth
-        - delidemir
-        - ramesh
-        - kowshik
-        - revi
-        - manikanta
-        - sravanthi
-        - sarvani
-        - nikitha
-        - sadekaa
+        - prasad
+        - nikhil
+        - durvesh
+        - diva
+        - pranav
+        - sujata
+        - katta
+        - gauri
 
 ----------------------------------------------------
 ** Setup module is going to print complete information of a worker node **
