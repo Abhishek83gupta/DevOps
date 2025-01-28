@@ -1,0 +1,167 @@
+## INTERVIEW Q ##
+
+1. What is Virtualization?
+      --> Process of using hardware properties in proper / better way
+2.  What is Containerization?
+      -->  process of packing application with its dependencies
+
+3. Differ b/w Docker stop v/s Docker kill ?
+            --> Docker stop = First Docker is going to stop all services inside conatiner it will wait servies to stop 
+            --> Docker kill = it doesn't care about service inside conatiner , directly attack
+4. Diifer Docker pull v/s Docker run ?
+            --> Docker pull = used to get the image 
+            --> Docker run = to run the container
+
+5. What is apt ?
+            --> apt : ADVANCE PACKAGER TOOL (tool which is used to install packages for ubuntu)
+6. What is Docker File ?
+            --> its a way of creating images automatically & used multiple times & in Docker file D is always capital and also components 
+
+5. Diifer RUN v/s CMD ?
+            --> RUN : executes commands during image creation
+            --> CMD : executes commands during conatiner creation
+-------------------------------------------------------------------------------------------------------------------------------
+
+Docker
+
+MONOLITHIC       : SINGLE APP -- > SINGLE SERVER -- > SINGLE DATABASE
+MICRO SERVICES   : SINGLE APP -- > MULTIPLE SERVERS -- > MULTIPLE DATABASES
+e.g. Paytm Application 
+-------------------------------------
+MONOLITHIC       : If your application is small & has limited users then MONOLITHIC is good
+- all service will be on single place
+- dB is single
+
+LIMITATIONS OF MONLITHIC:
+1. SERVER PERFOMANCE  (When a server got affected by only one service inside whatever the service having enitre we are going to stop it)
+2. DATABASE ISSUE 
+-------------------------------------
+MICRO SERVICES   : If your application is large & has more users then MICRO SERVICES  is good
+- each and every serice will be on individual server
+- individual server having individual dB
+
+If you used MICRO SERVICE:
+COST WILL BE HIGH
+MAINTAINANCE
+---------------------------------------------------------------------
+
+
+      ------------------------     ------------------------     ------------------------     ------------------------
+      |       ON-PREM        |     |    VIRTUALIZATION    |     |        CLOUD         |     |       CONTAINERS     |
+      |----------------------|     |----------------------|     |----------------------|     |----------------------|
+      |                      |     |   2cpu        2cpu   |     |                      |     |                      |
+      |                      |     |   2RAM        2RAM   |     |                      |     |                      |
+      |                      |     |                      |     |                      |     |                      |
+      |     APPLICATION      | --> |   2cpu        2cpu   | --> |  10 * 100 = 1000     | --> |                      |
+      |                      |     |   2RAM        2RAM   |     |  24 * 1000 = 24K     |     |                      |
+      |                      |     |                      |     |                      |     |                      |
+      |                      |     |                      |     |                      |     |                      |
+      |                      |     |        8 CPUs        |     |                      |     |                      |
+      |                      |     |        8 RAM         |     |                      |     |                      |
+      ------------------------     ------------------------     ------------------------     ------------------------
+        1.Maintenance                  1. Not Scalable              1. Cost is High             1. Light Weighted
+        2. Hardware Issues             2. Fixed H/w                                             2. Easy to manage
+        3. App Hosting Problem
+
+
+-------------------------------------
+SERVER = CONTAINER
+
+- Containers will not have os by default.
+- cant able to install pacakages
+- cant able to deploy the app.
+
+images: inside the image of docker we have os and packages
+
+image (os) -- > conatiner (app)
+
+VIRTUALIZATION: process of utilizing hardware resources in better.
+CONTAINERIZATION: process of packing application with its dependencies
+APP: PUBG DEPENDENCY: MAPS
+
+PUBG:
+APP: PLAYSTORE, MAPS: INTERNET
+---------------------------------------------------------------------
+
+DOCKER:
+- its a free and open-source platform.
+- docker will create containers.
+- we can create, run, and deploy our apps on containers.
+- its platform independent (native runs on Linux Distribution).
+- containers will use host resources (cpu, mem, ram, os)
+- docker will perform os level of VIRTUALIZATION called containerization.
+- containers are light weighted 
+
+History of Docker:
+- year: 2013
+- developed by: Solomen Hykes and Sebastian Phal
+- language: go lang    (Google Official Language is GO LANGAUGE)
+
+
+ARCHITECTURE:
+DOCKER CLIENT: its a way of interacting with docker  (if give command -- > output)
+DOCKER DAEMON: it manage all the docker components (images, cont, volumes, nlw)
+DOCKER HOST: where we installed docker
+DOCKER REGISTRY: it manages all the  docker images on internet.
+      
+** DOCKER COMPONENTS consume the H/w Resources of Host **
+
+                     e.g  --> (Trip - Money - from Mom - if not - from Dad - then to you)
+                          You                        Mom                          Dad
+                  ---------------------      ---------------------      ---------------------           
+                  |   DOCKER CLIENT   |      |    DOCKER_HOST    |      |  DOCKER REGISTRY  |
+                  |-------------------|      |-------------------|      |-------------------|                 
+                  |                   |      |   Docker Daemon   | ---->|                   |
+                  |   docker build    | ---->|                   | ---->|          Oracle   |
+                  |   docker pull     | ---->|  Containers       |      |                   |
+                  |   docker run      | ---->|           Images  |<---- |         Cassandra |
+                  |                   |      |                   |<---- |                   |
+                  |                   |<---- |                   |      |                   |
+                  |                   |      |                   |      |                   |
+                  ---------------------      ---------------------      ---------------------
+
+** after building Docker file you will get image **
+
+-------------------------------------
+
+image      : A Docker image is a blueprint for creating containers (An image is read-only, meaning it cannot be modified directly)
+
+container  : A container is a working copy of the image.
+           : A Docker container is a running instance of an image
+
+e.g.
+- Imagine you have a recipe book (the image). You can't write in it; it's read-only.
+- When you want to cook, you make a photocopy of the recipe (the container).
+- You can write notes or modify the photocopy (the writable layer), but the original recipe book (the image) stays unchanged.
+
+-------------------------------------
+INSTALLATION:
+yum install docker -y
+systemctl start docker
+systemctl status docker
+
+docker search                                : to search the docker images from daemon 
+docker pull amazonlinux	                     : to downlaod image
+du -sh                                       : server occupy storage for OS
+docker run -it --name cont1 amazonlinux      : to create conatiner
+ctrl p q                                     : to exit from conatiner
+
+
+                  docker run -it --name cont1 amazonlinux : to create conatiner
+                              |
+                        interactive terminal : for to go inside the conatiner 
+
+// Download inside container
+yum install git -y      
+yum install maven -y
+touch file1
+
+docker images		: to list images
+docker start cont1	: to start cont1
+docker stop cont1	      : to stop cont1      (It will take time to stop)
+docker kill cont1	      : to stop immedieatly cont1
+docker ps 		      : to see running containers
+docker ps -a		: to see all containers
+
+service docker start       : to start docker
+service docker status      : to show status of dokcer
