@@ -165,3 +165,180 @@ docker ps -a		: to see all containers
 
 service docker start       : to start docker
 service docker status      : to show status of dokcer
+
+-------------------------------------------------------------------------------------------------------------------------------
+-- 27 --
+-------------------------------------------------------------------------------------------------------------------------------
+OS LEVEL VIRTUALIZATION : what is inside OS completely create a backup of it.
+
+
+NOTE: 
+apt is package manager for ubuntu (yum in not supported for ubuntu)
+Redhat: Yum
+Ubuntu: Apt
+
+apt : advance packager tool
+
+docker pull ubuntu                      : to get ubuntu image
+docker run -it --name cont1 ubuntu      : to create ubuntu
+apt update -y                           : to update all
+docker attach cont1                     : to go inside container
+docker commit cont1 karan               : copy obejct from container to image (karan is image)  (docker commit only works to save a container obejct into image.)
+
+without running apt update -y we cant install packages
+
+            WORKING: (inside conatiner)      (This is Manual Process - is not going to used)
+            docker pull ubuntu 
+                  | 
+            docker run -it --name cont1 ubuntu
+                  |
+            apt update -y
+                  |
+            apt install git maven apache2 tree -y
+                  |
+            touch file{1..5}
+                  |
+            docker commit cont1 karan
+            docker run -it --name cont2 karan
+
+
+
+Whatever objects in the conatiner is directly copied to the image
+
+
+                           container-1                                      container-2
+                        --------------------        karan image         ---------------------
+        image           |                  |      ----------------      |                   |
+   ---------------      |      git         |      |              |      |      git          |
+   |             |      |      maven       |      |     git      |      |      maven        |
+   |             | ---> |      apache2     | ---> |     maven    | ---> |      apache2      |
+   |   ubuntu    | ---> |      tree        | ---> |     apache2  | ---> |      tree         |
+   |             |      |      files       |      |     tree     |      |      files        |
+   ---------------      |                  |      |     files    |      |                   |
+                        |                  |      ----------------      |                   |
+                        --------------------                            ---------------------    
+                                                                       
+                                                                        
+----------------------------------------------------------------------------------------------------------------
+
+DOCKERFILE:
+- its a way of creating images automatically.
+- we can reuse the docker file for multiple times.
+- in Dockerfile D will be Capital always.
+- Components inside the Dockerfile also Capital.
+
+Dockerfile -- > Image -- > Container -- > DockerFile --> Image --> Container --> Reapeat
+
+docker inspect cont7       : to give end to end information about container 
+docker inspect cont7 | grep -i author
+
+--------------------------------
+COMPONENTS:
+FROM		      : to base image (gives os) (get the OS)
+RUN		      : to execute linux commands (image creation)
+CMD		      : to execute linux commands (container creation)
+ENTRYPOINT	      : high priority than cmd
+COPY 		      : to copy local files to conatainer
+ADD 		      : to copy Intenet files to conatainer
+WORKDIR		: to go desired folder      (after run conatiner you will go desired folder)
+LABEL 		: to attach our tags/labels
+ENV		      : variables which run inside conatiner (image)
+ARGS		      : variables which run outside conatiner(containers)
+VOLUME		: used to create volume for conatiner
+EXPOSE		: used to give port number
+
+--------------------------------
+
+
+
+--------------------------------
+EX: -1
+
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+
+Build : docker build -t netflix:v1 .
+cont: docker run -it --name cont3 netflix:v1
+
+--------------------------------
+EX-2:
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+CMD apt install default-jre -y
+
+Build : docker build -t netflix:v2 .
+cont: docker run -it --name cont4 netflix:v2
+
+--------------------------------
+EX-3:
+
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+COPY index.html /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+
+--------------------------------
+EX-4:
+
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+COPY index.html /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+WORKDIR /tmp
+LABEL author karank
+
+--------------------------------
+EX-5:
+
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+COPY index.html /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+WORKDIR /tmp
+LABEL author karank
+ENV name prasad 
+ENV client swiggy
+
+run commands inside container
+echo $name
+echo $client
+
+
+--------------------------------
+EX-6:
+
+FROM ubuntu
+RUN apt update -y
+RUN apt install git maven tree apache2 -y
+COPY index.html /tmp
+ADD https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz /tmp
+WORKDIR /tmp
+LABEL author karank
+ENV name prasad
+ENV client swiggy
+VOLUME ["/volume1"]
+EXPOSE 8080
+
+--------------------------------
+COMMANDS:
+docker ps -a                         : to list all conatiners 
+docker ps -a -q		             : to list conatnier ids
+docker stop $(docker ps -a -q)       : to stop all conatiners
+docker rm $(docker ps -a -q)         : to delete all conatiners
+
+docker images -q	                   : to print image ids
+docker rmi -f $(docker images -q)    : to delete all images      
+         |
+       i = images
+
+--------------------------------
+
+if container is not starting or you can't go inside container :
+
+docker build -t netflix:v1 .
+docker run -it --name cont1 netflix:v1 /bin/bash      (then u r able to go inside conatiner without this u can't)
