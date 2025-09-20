@@ -1,0 +1,658 @@
+## INTERVIEW Q ##
+
+1. Differ bet apt-update & apt-upgrade ?
+      --> apt-update = it show list of packages to update but it won't update
+      --> apt-upgrade = but you really want to update these packages upgrade is used 
+
+2. Difference Between ReplicaSet v/s Deployment?
+      --> ReplicaSet = in ReplicaSet we can not update the image   (it will create same of copy of ReplicaSet)
+      --> Deployment = in Deployment we can update                 
+
+3. What is service and its types ?
+      --> SERVICE: It is used to expose the application in k8s.
+            --> CLUSTERIP      = It will work inside the cluster. it will not expose to outer world.
+            --> NODEPORT       = It will expose our application in a particular port            Range: 30000 - 32767
+            --> LOADBALACER    =  It will expose our app and distribute load blw pods.
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+Kubernetes
+- open-source Orchestration tool/platform
+- used to automates manual processes lke deploying, managing, and scaling containersized application
+- developed by Google using GO language
+- denoted by K8S to CNCF in 2014    (CNCF - Cloud Native Computing Foundation)
+- 1st version released in 2015
+
+------------------------------------------------------------
+
+DOCKER SWARM:
+CLUSTER 
+NODES
+CONTAINER
+APP
+                        To remember shortcut : South Heros
+C: CLUSTER                      Chiranjivi
+N: NODE                         Naga arjun
+P: POD                          Pavan kalyan
+C: CONTAINER                    Charan
+A: APPLICATION                  Allu Arjun
+
+
+NOTE: k8s don't communicate with containers.
+it communicate with pods.
+
+------------------------------------------------------------
+COMPONENTS:
+
+MASTER NODE:
+1. API SERVER      : its for communicating with cluster, it takes command executes and gives output.
+2. ETCD            : its a DB of cluster, all the cluster info will store here.
+3. SCHEDULER       : schedules/create pods on worker nodes, based on hardware resources.
+4. CONTROLLER      : used to control the k8s objects.
+      a. cloud controllers
+      b. kube controllers
+
+----------------------
+WORKER NODE:
+KUBELET: its an agent used to communicate with master.
+KUBEPROXY: it deals with nlw.
+POD: its a group of containers.
+
+------------------------------------------------------------
+There are multiple ways to setup kubernetes cluster.
+
+1.SELF MANAGER K8'S CLUSTER
+    a. mini kube (single node cluster)
+    b. kubeadm   (multi node cluster)
+    c. KOPS
+
+2. CLOUD MANAGED K8'S CLUSTER
+    a. AWS EKS
+    b. AZURE AKS
+    c. GCP GKS
+    d. IBM IKE
+
+------------------------------------------------------------
+MINIKUBE:
+  - It is a tool used to setup single node cluster on K8's. 
+  - It contains API Servers, ETDC database and container runtime
+  - It is used for development, testing, and experimentation purposes on local. 
+  - Here Master and worker runs on same machine.
+  - It is a platform Independent.
+
+NOTE: But we don't implement this in real-time (production)
+
+----------------------
+REQUIRMENTS:
+2 CPUs or more
+2GB of free memory
+20GB of free disk space
+Internet connection
+Container or virtual machine manager, such as: Docker.
+
+ec2 - MINIKUBE - UBuntu - n-1 version - t2.medium - keypair - Network setting all - Storage(volumes) = size(GiB) = 20
+
+------------------------------------------------------------
+Manual Processs : ❌❌
+
+UPDATAE SERVER :
+ 1. apt update -y
+ 2. apt upgrade -y
+
+INSTALL DOCKER :
+sudo apt install curl wget apt-transport-https -y
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+INSTALL MINICUBE :
+sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64      #(Download Minikube’s latest release:)
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube           # (Move the file to your system’s executable path:)
+sudo chmod +x /usr/local/bin/minikube           # (Give Minikube execute permissions:)
+minikube version                  
+
+INSTALL KUBECTL :
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"           # ( Download the latest version of kubectl:)
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+sudo echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
+#✅ If the output says kubectl: OK, you’re good to go!
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+sudo kubectl version --client
+sudo kubectl version --client
+sudo minikube start --driver=docker --force            #(Start Minikube with Docker as the driver)
+
+------------------------------------------------------------
+
+PODS:
+
+ - It is a smallest unit of deployment in K8's.
+ - It is a group of containers.
+ - Pods are ephemeral (short living objects)
+ - Mostly we can use single container inside a pod but if we required, we can create multiple containers inside a same pod.
+ - when we create a pod, containers inside pods can share the same network namespace, and can share the same storage volumes .
+ - While creating pod, we must specify the image, along with any necessary configuration and resource limits.
+ - K8's cannot communicate with containers, they can communicate with only pods.
+ - We can create this pod in two ways, 
+      1. Imperative(command) 
+      2. Declarative (Manifest file)
+
+
+----------------------
+** If server id old and trying to srating as new but if fails then **
+
+sudo minikube delete
+exit
+sudo usermod -aG docker $USER
+newgrp docker
+minikube start --driver=docker
+
+
+----------------------
+IMPERATIVE: 
+
+kubectl run pod1 --image rahamshaik/paytmtrain:latest      : used to create pod of particular image
+kubectl get po/pod/pods                                    : list of pods
+kubectl get po/pod/pods -o wide                            : want to see additional information about pod
+kubectl describe pod pod1                                  : to show complete information of pod
+kubectl delete pod pod1                                    : to delete pod
+
+----------------------
+DECLARATIVE :
+
+vim abc.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod1
+spec:
+  containers:
+    - image: nginx
+      name: cont1
+
+kubectl create -f abc.yml
+kubectl get po/pod/pods
+kubectl get po/pod/pods -o wide
+kubectl describe pod pod1
+kubectl delete pod pod1
+
+-------------------------------------------------------------------------------------------------------------------
+-- 34 --
+-------------------------------------------------------------------------------------------------------------------
+
+DRAWBACK:
+if we delete the pod we cant retrive.
+all the load will be handled by single pod.
+
+
+REPLICA SET:
+it will create same pod of multiple replicas.
+if we delete one pod it will create automatically.
+we can distribute the load also.
+
+
+LABLE: assing to a pod for identification. to work with them as single unit.
+SELECTOR: used to identify the pod with same label.
+
+
+kubectl api-resources      : it can show the shortcuts  ( to know which kind of object that used)
+
+-------------------------------------------------------------------------------------------------------------------
+-- 35 --      Kops MINIKUBE
+-------------------------------------------------------------------------------------------------------------------
+
+REPLICASET:
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: nginx
+
+kubectl create -f abc.yml
+
+
+kubectl get rs                        : to show the replica set
+kubectl get rs -o wide                : get some additional information 
+kubectl describe rs swiggy-rs         : complete information
+kubectl delete rs swiggy-rs           :
+kubectl edit rs/swiggy-rs             :
+
+Note : SELECTOR and LABLES must be matched (identical)
+
+------------------------------------------------------------
+SCALING: 
+
+SCALE-IN: Increasing the count of pods
+kubectl scale rs/swiggy-rs --replicas=10
+
+SCALE-OUT: Decreasing the count of pods
+kubectl scale rs/swiggy-rs --replicas=5
+
+SCALING FOLLOWS LIFO PATTERN:
+LIFO : LAST IN FIRST OUT
+the pod which is created will be deleted first automatically when we scale out.
+
+----------------------
+rs - (rs will create) - > pods
+deployment - (deployment will create) - > rs - (rs will create) - > pods
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: nginx
+
+kubectl get deploy
+kubectl get deploy -o wide
+kubectl describe deploy swiggy-rs
+kubectl edit deploy/swiggy-rs
+kubectl delete deploy swiggy-r
+kubectl delete po --all
+
+------------------------------------------------------------
+KUBECOLOR: to give color to the k8s output
+
+wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.tar.gz
+tar -zxvf kubecolor_0.0.25_Linux_x86_64.tar.gz
+./kubecolor
+chmod +x kubecolor
+mv kubecolor /usr/local/bin/
+kubecolor get po
+
+
+-------------------------------------------------------------------------------------------------------------------
+-- 36 --      k8s Kops Cluster Automatically Setups Manually
+-------------------------------------------------------------------------------------------------------------------
+
+INFRASTRUCTURE: Resources used to run our application on cloud.      (without infrastructure we can not going host our application)
+EX: Ec2, VPC, ALB, --->
+      - like for e.g
+      to deploy a application  -> server                  |
+      to distribute balance    -> Load Balancer           |  --> infrastructure = resource used to run our application on cloud
+      to have security and privacy --> VPC                |
+      to scale servers   --> Autoscaling Group            |
+
+Cluster  --> Group of nodes
+
+dry run --> without running kops we can check possible outcomes 
+
+High Availability = Maintining more than one server
+
+Minicube --> Single Node Cluster
+
+file download --> give executables permission --> move to user local bin
+
+------------------------------------------------------------
+
+KOPS       -- Third party tool (open source)  --> k8s Operation whcih can create cluster automatically 
+- also known as Kubernetes Operation
+- its open source for creating, destroying, upgrading and maintaining k8s cluster.
+- KOPS can also provide cloud infrastructure 
+- kOps is mostly used in deploying AWS and GCE Kubernetes clusters. 
+- But officially, the tool only supports AWS. 
+Support for other cloud providers (such as DigitalOcean, GCP, and OpenStack) are in the beta stage.
+
+
+ADVANTAGES:
+•	Automates the provisioning of AWS and GCE Kubernetes clusters
+•	Deploys highly available Kubernetes masters
+•	Supports rolling cluster updates
+•	Autocompletion of commands in the command line
+•	Generates Terraform and CloudFormation configurations
+•	Manages cluster add-ons.
+•	Supports state-sync model for dry-runs and automatic idempotency
+•	Creates instance groups to support heterogeneous clusters
+
+
+ALTERNATIVES for kops :
+Amazon EKS , MINIKUBE, KUBEADM, RANCHER, TERRAFORM, HELM. 
+
+----------------------
+STEP-1: GIVING PERMISSIONS
+IAM -- > USER -- > CREATE USER -- > NAME: KOPS -- > Attach Polocies Directly -- > Select AdministratorAccess -- > NEXT -- > CREATE USER
+USER -- > SECURTITY CREDENTIALS -- > CREATE ACCESS KEYS -- > CLI -- > CHECKBOX -- >  CREATE ACCESS KEYS -- > DOWNLOAD 
+
+Commands:      
+aws configure
+access key
+secret access key
+region name = ap-south-1
+output format = table     
+----------------------
+SETP-2: INSTALL KUBECTL AND KOPS
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"            # will download kubectl
+wget https://github.com/kubernetes/kops/releases/download/v1.25.0/kops-linux-amd64                                    # will download KOPS
+chmod +x kops-linux-amd64 kubectl                                                      # giving executable permission 
+mv kubectl /usr/local/bin/kubectl                                          # move to user local bin becuase all user executable commmand store in this bin
+mv kops-linux-amd64 /usr/local/bin/kops
+
+kops version
+kubectl version
+vim .bashrc      --> at bottom  --> export PATH=$PATH:/usr/local/bin            (beacuuse this download from internet so by default comand not work so telling that take command of kops and kubectl from user local bin)
+source .bashrc 
+kops version
+kubectl version
+----------------------
+SETP-3: CREATEING BUCKET = complete infrastructure information is going store on BUCKET             (Backup of cluster)
+      --> unfortunately you delete cluster , with the help of cluster configuration that is inside bucket can be create cluster again 
+
+create bucket  --> give versioning to bucket (beacuse to retriving the deleted files)  --> whatever information inside cluster export on this bucket 
+
+aws s3api create-bucket --bucket devopsbyprasad188.k8s.local --region us-east-1      # creating bucket
+aws s3api put-bucket-versioning --bucket devopsbyprasad188.k8s.local --region us-east-1 --versioning-configuration Status=Enabled      #give versioning to bucket (beacuse to retriving the deleted files) 
+export KOPS_STATE_STORE=s3://devopsbyprasad188.k8s.local            # whatever information inside cluster export on this bucket 
+
+----------------------
+SETP-4: CREATING THE CLUSTER
+
+kops create cluster --name prasad.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+kops update cluster --name prasad.k8s.local --yes --admin
+
+----------------------
+Suggestions:
+ * list clusters with: kops get cluster
+ * edit this cluster with: kops edit cluster rahams.k8s.local
+ * edit your node instance group: kops edit ig --name=rahams.k8s.local nodes-us-east-1a
+ * edit your master instance group: kops edit ig --name=rahams.k8s.local master-us-east-1a
+
+----------------------      
+ADMIN ACTIVITIES:
+To scale the worker nodes:
+kops edit ig --name=rahams.k8s.local nodes-us-east-1a
+kops update cluster --name rahams.k8s.local --yes --admin 
+kops rolling-update cluster --yes
+
+kubectl describe node node_id
+kops delete cluster --name rahams.k8s.local --yes
+
+
+-------------------------------------------------------------------------------------------------------------------
+-- 37 -- Kops Setup Automatic & Kops Automates Infrastructure
+-------------------------------------------------------------------------------------------------------------------
+
+kube-node = taking something from someone
+
+** Bucket name should be globally unique **
+**  when you are executing the script EXPORT command you need to run separately ** (export command whcih is in script )
+
+NAMESPACE : Its a concept that is used to divide a cluster to mutliple teams on real time. (developer,tester,devops-peoples)
+            It is used to isolate environment.
+                  -> for e.g -  developer work on dev NAMESPACE he can't see the testeing NAMESPACE (he didn'tknow what is happening in test NAMESPACE)
+
+CLUSTER: HOUSE
+NAMESPACES: ROOM
+
+Each namespace is isolated.
+if your are room-1 are you can not able to see room-2.
+we cant access the objects from one namespace to another namespace.
+
+
+TYPES:
+
+default             : It is the default namespace, all objects will create here only
+kube-node-lease     : it will store object which is taken from one namespace to another.
+kube-public	        : all the public objects will store here.      
+kube-system 	  : default k8s will create some objects, those are storing on this NAMESPACE.
+
+
+kubectl get pod -n kube-system	: to list all pods in kube-system namespace
+kubectl get pod -n default	      : to list all pods in default namespace
+kubectl get pod -n kube-public	: to list all pods in kube-public namespace
+kubectl get po -A		            : to list all pods in all namespaces
+
+
+kubectl create ns dev	                                    : to create namespace
+kubectl config set-context --current --namespace=dev        : to switch to the namespace
+kubectl config view                                         : to see current namespace
+kubectl config view --minify | grep namespace               : to see current namespace
+kubectl delete ns dev	                                    : to delete namespace
+kubectl delete pod --all                                    : to delete all pods
+
+kubectl get po -n dev       : to go on dev NAMESPACE (bydefaultly it will not show but if ypu want to accessanother node )
+
+
+
+NOTE: By deleting  the ns all objects also gets deleted.
+in real time we use RBAC concept to restrict the access from one namespace to another.
+so users cant access/delete ns, because of the restriction we provide.
+we create roles and rolebind for the users.
+
+
+
+                                           SERVICE: It is used to expose the application in k8s.
+                                                                   |
+                                        -------------------------------------------------------
+                                        |                           |                         |
+                                     CLUSTERIP                    NODEPORT                 LOADBALACER
+                        
+
+SERVICE: It is used to expose the application in k8s.
+
+TYPES:
+1. CLUSTERIP: It will work inside the cluster.
+it will not expose to outer world.
+      --> e.g = database network = it will not accssible to end users but if the people who are in that oraganisation they can access it.
+
+----------------------
+2. NODEPORT: It will expose our application in a particular port.
+Range: 30000 - 32767 (in sg we need to give all traffic)
+
+NOTE: UPDATE THE SG (REMOVE OLD TRAFFIC AND GIVE ALL TRAFFIC & SSH)
+DRAWBACK:
+PORT RESTRICTION.
+      --> like of you change nodePort then you cant see at previous port number
+      --> for also you have to permisson to changeing port number apply appilcation to new port number
+command : kubectl apply -f abc.yml       (manifest file)
+
+----------------------
+3. LOADBALACER: It will expose our app and distribute load blw pods.
+
+
+
+
+TYPES:
+1. CLUSTERIP: It will work inside the cluster.
+it will not expose to outer world.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/moviespaytm:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sv1
+spec:
+  type: ClusterIP
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+
+DRAWBACK:
+We cannot use app outside.
+
+------------------------------------------------------------
+2. NODEPORT: It will expose our application in a particular port.
+Range: 30000 - 32767 (in sg we need to give all traffic)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: NodePort
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31111
+
+NOTE: UPDATE THE SG (REMOVE OLD TRAFFIC AND GIVE ALL TRAFFIC & SSH)
+DRAWBACK:
+PORT RESTRICTION.
+
+------------------------------------------------------------
+3. LOADBALACER: It will expose our app and distribute load blw pods.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: LoadBalancer
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+k8s Manifest Files :
+
+1. Deployment.yaml
+
+💡 Purpose:
+It tells Kubernetes how to run your app containers — how many copies, what image to use, and how to manage failures
+
+📦 Think of it as:
+"I want 2 running instances of my app using this Docker image."
+
+🔧 Responsibilities:
+Creates Pods (which run your containers)
+Manages replicas (number of copies of the app)
+Restarts crashed containers automatically
+Ensures high availability
+
+🧱 Without it, your app won't even run inside Kubernetes.
+
+
+------------------------------------------------------------
+2. service.yaml
+
+💡 Purpose:
+It tells Kubernetes how to expose your app — inside the cluster or to the outside world (like via a browser or Postman).
+
+🌐 Think of it as:
+"Make my app reachable at a specific IP/port."
+
+🔧 Responsibilities:
+Connects users to your app
+Load balances traffic between your Pods
+Can expose the app internally or publicly
+Ensures stable access to your app (even if Pods are replaced)
+
+🧱 Without it, no one can access your app, even if it's running.
+
+------------------------------------------------------------
+3. Pod.yaml
+
+💡 Purpose:
+It tells Kubernetes to run a single instance of your app in a container — this is the smallest unit you can deploy in Kubernetes.
+
+🧱 Think of it as:
+"Run one specific Docker container inside the cluster."
+No auto-scaling, no replicas — just one running container.
+
+🔧 Responsibilities:
+Runs a single container (or tightly-coupled containers)
+Defines the image, ports, and environment for that container
+Used for testing, debugging, or very simple apps
+Does not auto-restart or manage multiple replicas like a Deployment
